@@ -12,94 +12,118 @@ window.resizable("false", "false")
 #Data - Hashmap for questions, answers as well as options
 questions = [
     
-    {"question": "Question1",
+    {"Question": "Who created the lightbulb?",
+    "options": ["Thomas Edison", "Bob Marley", "Joseph Joestar", "Isaac Newton"],
+    "answer": "Answer",
+},
+
+    {"Question": "When did the Great Depression start?",
     "options": ["Option1", "Option 2", "Option 3", "Option 4"],
     "answer": "Answer",
 },
 
-    {"question": "Question2",
-    "options": ["Option1", "Option 2", "Option 3", "Option 4"],
-    "answer": "Answer",
-},
-
-    {"question": "Question3",
+    {"Question": "Who was the president of Great Britain during WW2?",
     "options": ["Option1", "Option 2", "Option 3", "Option4"],
     "answer": "Answer",
 },
 
-    {"question": "Question4",
+    {"Question": "What year did WW2 start?",
     "options": ["Option1", "Option 2", "Option 3","Option4"],
     "answer": "Answer",
 },
 
-    {"question": "Question5",
+    {"Question": "When did Captain Cook land?",
     "options": ["Option1", "Option 2", "Option 3", "Option4"],
     "answer": "Answer",
 },
 
 ]
 
-#scores
-
-
-
+# variables
 score = 0
-question_number  = 1
-total_questions = 5
+question_number = 1
 
 
 
-# def next():
 
+# functions
 
+# Checks answer
+def answer_check(picked_button):
+    question = questions[question_number]
+
+    if option_buttons[picked_button].cget("text") == question["answer"]:
+        print ("correct")
+
+    else:
+        print("incorrect")
+
+# Displays text from the array onto the buttons
+
+def options_implement(): 
+    question = questions[question_number]
+    question_label.configure(text = question("Question"))
+    options = question("options")
     
+    for i in range(4):
+      option_buttons[i].configure(text=options[i])
+      
+      
+      
+
+
+# Frames
+
+start_frame = ctk.CTkFrame(master=window,
+                          width= 500,
+                          height=400)
+
+main_frame = ctk.CTkFrame(master=window,
+                          width= 600,
+                          height=500,
+                          fg_color="tan",
+)
+
+end_frame  = ctk.CTkFrame(master=window,
+                          width=500,
+                          height=400)
+
+main_frame.pack(expand=True)
+
+
+
 
 # Widgets
 
 
-# options
-def tick(option_number):
-    if (option_number == 1):
-        option_variable1.set("on1")
-        option_variable2.set("off2")
-        option_variable3.set("off3")
-        option_variable4.set("off4")
- 
-    elif (option_number == 2):
-        option_variable1.set("off1")
-        option_variable2.set("on2")
-        option_variable3.set("off3")
-        option_variable4.set("off4")
+question_label = ctk.CTkLabel(
+    master=main_frame,
+    text="indian",
+    width=10,
+    height=10,
+    bg_color="red"
+)
+options_implement()
+# options buttons
 
-    elif (option_number == 3):
-        option_variable1.set("off1")
-        option_variable2.set("off2")
-        option_variable3.set("on3")
-        option_variable4.set("off4")
+option_buttons = []
 
-    elif (option_number == 4):
-        option_variable1.set("off1")
-        option_variable2.set("off2")
-        option_variable3.set("off3")
-        option_variable4.set("on4")
+for i in range(4):
+    option = ctk.CTkButton(
+        master=main_frame,
+        command=lambda i=i: answer_check(i)
+    )
+    option.pack()
+    option_buttons.append(option)
 
-option_variable1 = StringVar()
-option_variable2 = StringVar()
-option_variable3 = StringVar()
-option_variable4 = StringVar()
+# checker
+checker_label = ctk.CTkLabel(
+    master=main_frame,
+    width=100,
+    height=10,
+    bg_color="red",
+)
 
-option1 = ctk.CTkCheckBox(window, variable=option_variable1, text="Option1", onvalue="on1", offvalue="off1", command=lambda:tick(1))
-option1.pack()
-
-option2 = ctk.CTkCheckBox(window, variable=option_variable2, text="Option2", onvalue="on2", offvalue="off2", command=lambda:tick(2))
-option2.pack()
-
-option3 = ctk.CTkCheckBox(window, variable=option_variable3, text="Option3", onvalue="on3", offvalue="off3", command=lambda:tick(3))
-option3.pack()
-
-option4 = ctk.CTkCheckBox(window, variable=option_variable4, text="Option4", onvalue="on4", offvalue="off4", command=lambda:tick(4))
-option4.pack()
-
-
+# next button
 
 window.mainloop()
