@@ -1,13 +1,17 @@
-# Declaration
 import customtkinter as ctk
+import pygame
+pygame.mixer.init()
 
-# lays out initial window
+
+# Initialize main window
 window = ctk.CTk()
 window.title("History Quiz")
-window.geometry("600x400")
+window.geometry("600x500")
 window.resizable(True, True)
 
-# Data - Hashmap for questions, answers as well as options
+
+
+# Data - List of dictionaries for questions, answers, and options
 questions = [
     {"Question": "Who created the lightbulb?",
      "options": ["Thomas Edison", "Bob Marley", "Joseph Joestar", "Isaac Newton"],
@@ -30,12 +34,18 @@ questions = [
 score = 0
 question_number = 0
 
-# Frames for start, end and main quiz
-start_frame = ctk.CTkFrame(master=window, fg_color="white")
-main_frame = ctk.CTkFrame(master=window, fg_color="white")
-end_frame = ctk.CTkFrame(master=window, fg_color="white")
+# Colour palette
+background_color = "#f0f0f0"  # Light grey
+button_color = "#007ACC"  # Professional blue
+button_hover_color = "#005A9E"
+text_color = "#333333"  # Dark grey for text
 
-# Frames are set to not resize relative to children and fills whole screen
+# Frames for start, end and main quiz
+start_frame = ctk.CTkFrame(master=window, fg_color=background_color)
+main_frame = ctk.CTkFrame(master=window, fg_color=background_color)
+end_frame = ctk.CTkFrame(master=window, fg_color=background_color)
+
+# Frames are set to not resize relative to children and fill the whole screen
 start_frame.pack_propagate(False)
 main_frame.pack_propagate(False)
 end_frame.pack_propagate(False)
@@ -48,34 +58,37 @@ end_frame.pack(fill='both', expand=True)
 main_frame.pack_forget()
 end_frame.pack_forget()
 
-# Brings in the global variable of score, question sets variables that pull data from the array and uses global variable question_numebr to pick index, same goes with options.
-# selected variable pulls data from the option_buttons array and uses picked_button as a index parameter from the answer_check function
+# Sound function
+def play_sound(file):
+    sound = pygame.mixer.Sound(file)
+    sound.play()
 
+# Function to check the answer
 def answer_check(picked_button):
     global score, question_number
     question = questions[question_number]
     selected = option_buttons[picked_button]
-    options = question["options"]
 
     if selected.cget("text") == question["answer"]:
         score += 1
-        checker_label.configure(text="Correct", fg_color="green")
+        checker_label.configure(text="Correct! Nice job!", fg_color="green")
+        play_sound("Correct Nice job .wav")
     else:
-        checker_label.configure(text="Incorrect", fg_color="red")
-    checker_label.pack()
+        checker_label.configure(text="Incorrect. Better luck next time!", fg_color="red")
+        play_sound("Incorrect Better luc.wav")
+    checker_label.pack(pady=10)
     for i in range(4):
-        option_buttons[i].configure(text=options[i], state="disabled")
+        option_buttons[i].configure(state="disabled")
     next_button.configure(state="normal")
 
-
-# Forgets the start and end frame to reveal the main quiz
-
+# Function to start the quiz
 def Enter():
     start_frame.pack_forget()
     main_frame.pack(fill='both', expand=True)
     end_frame.pack_forget()
     implement()
-# Forgets the endframe and mainframe, packs the first frame and resets the score as well as question_number
+
+# Function to restart the quiz
 def Restart():
     global question_number, score
     question_number = 0
@@ -85,22 +98,17 @@ def Restart():
     end_frame.pack_forget()
     implement()
 
-
-# Sets a label pulling the question from the questions array and uses initial value of question_number for display
-# Make a loop 4 utilising the array options to set them onto a button loop done after
-# Forgets checker_label in order to have it popup later from a function
-# sets the state of next button to disabled in order to prevent the user form being able to go forward without selecting an answer
-
+# Function to implement the question and options
 def implement():
     question = questions[question_number]
-    question_label.configure(text=question["Question"])
+    question_label.configure(text=question["Question"], text_color=text_color)
     options = question["options"]
     for i in range(4):
         option_buttons[i].configure(text=options[i], state="normal")
     checker_label.pack_forget()
     next_button.configure(state="disabled")
 
-
+# Function to move to the next question
 def next():
     global question_number
     question_number += 1
@@ -112,26 +120,38 @@ def next():
         end_frame.pack(fill='both', expand=True)
         scorelabel()
 
+# Function to display the score
 def scorelabel():
-    score_label.configure(text=f"You scored: {score}/{len(questions)} good job!")
+    score_label.configure(text=f"You scored: {score}/{len(questions)}! Good job!")
 
 # Widgets
+title_label = ctk.CTkLabel(
+    master=start_frame,
+    text="Welcome to the History Quiz!",
+    font=("Lexend", 32),
+    text_color=text_color
+)
+title_label.pack(pady=40)
+
 enter_button = ctk.CTkButton(
     master=start_frame,
     text="Start Quiz",
     command=Enter,
     border_color="black",
     border_width=1,
-    fg_color="Grey",
+    fg_color=button_color,
+    hover_color=button_hover_color,
+    font=("Lexend", 20),
+    width=200,
+    height=50
 )
 enter_button.pack(pady=20)
 
 question_label = ctk.CTkLabel(
     master=main_frame,
-    width=10,
-    height=10,
     text="",
-    fg_color="red"
+    text_color=text_color,
+    font=("Lexend", 22)
 )
 question_label.pack(pady=20)
 
@@ -141,52 +161,71 @@ for i in range(4):
     option = ctk.CTkButton(
         master=main_frame,
         command=lambda i=i: answer_check(i),
-        height=30,
+        height=35,
         width=400,
-        fg_color="blue",
+        fg_color=button_color,
+        hover_color=button_hover_color,
+        font=("Lexend", 18)
     )
     option_buttons.append(option)
-    option.pack(pady=5)
+    option.pack(pady=10)
 
 # Checker label
 checker_label = ctk.CTkLabel(
     master=main_frame,
-    width=100,
+    corner_radius=5,
+    text="",
+    width=150,
     height=50,
-    fg_color="red",
+    font=("Lexend", 16)
 )
+checker_label.pack(pady=10)
 
 # Next button
 next_button = ctk.CTkButton(
     master=main_frame,
-
-    fg_color="red",
+    fg_color=button_color,
+    hover_color=button_hover_color,
     text="Next",
     state="disabled",
     command=next,
+    font=("Lexend", 20),
+    width=150,
+    height=50
 )
-
 next_button.pack(pady=20)
+
+score_label = ctk.CTkLabel(
+    master=end_frame,
+    text="",
+    text_color=text_color,
+    font=("Lexend", 22)
+)
+score_label.pack(pady=20)
 
 # Restart button for end_frame
 restart_button = ctk.CTkButton(
     master=end_frame,
     text="Restart Quiz",
     command=Restart,
-    fg_color="blue"
+    fg_color=button_color,
+    hover_color=button_hover_color,
+    font=("Lexend", 20),
+    width=200,
+    height=50
 )
-restart_button.pack(pady=20)
+restart_button.pack(pady=40)
 
 # Score label for end_frame
-score_label = ctk.CTkLabel(
-    master=end_frame,
-    text="",
-    fg_color="blue",
-)
-score_label.pack(pady=20)
 
 
+# Centering widgets in start_frame
+title_label.pack(anchor='center')
+enter_button.pack(anchor='center')
 
+# Centering widgets in end_frame
+score_label.pack(anchor='center')
+restart_button.pack(anchor='center')
 
 # Initial implementation
 implement()
