@@ -1,3 +1,6 @@
+
+# Imports needed libraries and modules
+
 import customtkinter as ctk
 import pygame
 pygame.mixer.init()
@@ -7,7 +10,7 @@ pygame.mixer.init()
 window = ctk.CTk()
 window.title("History Quiz")
 window.geometry("600x500")
-window.resizable(True, True)
+window.resizable(False, False)
 
 
 
@@ -35,10 +38,10 @@ score = 0
 question_number = 0
 
 # Colour palette
-background_color = "#f0f0f0"  # Light grey
-button_color = "#007ACC"  # Professional blue
+background_color = "#f0f0f0" 
+button_color = "#007ACC"
 button_hover_color = "#005A9E"
-text_color = "#333333"  # Dark grey for text
+text_color = "#333333"
 
 # Frames for start, end and main quiz
 start_frame = ctk.CTkFrame(master=window, fg_color=background_color)
@@ -58,12 +61,12 @@ end_frame.pack(fill='both', expand=True)
 main_frame.pack_forget()
 end_frame.pack_forget()
 
-# Sound function
+# Sound function assigns sound as the command from pygame and assigns the file parameter for later use.
 def play_sound(file):
     sound = pygame.mixer.Sound(file)
     sound.play()
 
-# Function to check the answer
+# Function to check the answer, it checks the text of the selected option and pulls data from the array to verify, award scores and changes feedback accordingly.
 def answer_check(picked_button):
     global score, question_number
     question = questions[question_number]
@@ -81,14 +84,14 @@ def answer_check(picked_button):
         option_buttons[i].configure(state="disabled")
     next_button.configure(state="normal")
 
-# Function to start the quiz
+# Function to start the quiz, forgets everything but the main quiz frame
 def Enter():
     start_frame.pack_forget()
     main_frame.pack(fill='both', expand=True)
     end_frame.pack_forget()
     implement()
 
-# Function to restart the quiz
+# Function to restart the quiz, resets score and forgets everything but the start frame
 def Restart():
     global question_number, score
     question_number = 0
@@ -98,7 +101,7 @@ def Restart():
     end_frame.pack_forget()
     implement()
 
-# Function to implement the question and options
+# Function to implement the question and options, data is pulled from the array and a loop is done in a range of 4 in order to generate option buttons.
 def implement():
     question = questions[question_number]
     question_label.configure(text=question["Question"], text_color=text_color)
@@ -108,7 +111,7 @@ def implement():
     checker_label.pack_forget()
     next_button.configure(state="disabled")
 
-# Function to move to the next question
+# Function to move to the next question, updates global number and thus modifies the option and question from using a different index value.
 def next():
     global question_number
     question_number += 1
@@ -120,11 +123,11 @@ def next():
         end_frame.pack(fill='both', expand=True)
         scorelabel()
 
-# Function to display the score
+# Function to display the score, changes text of the score_label
 def scorelabel():
     score_label.configure(text=f"You scored: {score}/{len(questions)}! Good job!")
 
-# Widgets
+# Widgets - makes objects for the code that are going to be displayed.
 title_label = ctk.CTkLabel(
     master=start_frame,
     text="Welcome to the History Quiz!",
@@ -155,6 +158,7 @@ question_label = ctk.CTkLabel(
 )
 question_label.pack(pady=20)
 
+# generates option buttons
 # Option buttons
 option_buttons = []
 for i in range(4):
@@ -227,7 +231,7 @@ enter_button.pack(anchor='center')
 score_label.pack(anchor='center')
 restart_button.pack(anchor='center')
 
-# Initial implementation
+# Initial implementation, calls the previously defined function to make an initial generation of the quiz
 implement()
 
 window.mainloop()
